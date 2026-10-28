@@ -1,0 +1,214 @@
+
+{% extends "base.html" %}
+
+{% block title %}Company Dashboard | CampusHire AI{% endblock %}
+
+{% block content %}
+
+<div class="pagehead">
+    <div class="eyebrow">COMPANY WORKSPACE</div>
+
+    <h1>Welcome, {{ session.get('name') }}.</h1>
+
+    <p>
+        Post jobs, review applicants, update application status
+        and schedule interviews.
+    </p>
+
+    <a class="button primary" href="{{ url_for('new_job') }}">
+        + Post a Job
+    </a>
+</div>
+
+<!-- Dashboard Statistics -->
+<section class="stats-grid">
+
+    <article class="stat-card">
+        <div class="stat-label">Total Jobs</div>
+        <div class="stat-value">{{ total_jobs }}</div>
+        <div class="stat-description">Jobs posted by you</div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-label">Applications</div>
+        <div class="stat-value">{{ total_applications }}</div>
+        <div class="stat-description">Applications received</div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-label">Shortlisted</div>
+        <div class="stat-value">{{ shortlisted }}</div>
+        <div class="stat-description">Candidates shortlisted</div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-label">Average Resume Score</div>
+        <div class="stat-value">{{ average_score }}<span>/100</span></div>
+        <div class="stat-description">Across received applications</div>
+    </article>
+
+</section>
+
+<!-- Posted Jobs -->
+<section class="sectiontitle">
+    <div>
+        <div class="eyebrow">YOUR OPENINGS</div>
+        <h2>Posted Jobs</h2>
+    </div>
+</section>
+
+<div class="cards">
+
+    {% for job in jobs %}
+
+    <article class="jobcard">
+        <div class="jobicon">▣</div>
+
+        <h3>{{ job.title }}</h3>
+
+        <p>{{ job.description }}</p>
+
+        <div class="tags">
+            {% for skill in job.skills.split(',') %}
+                <span>{{ skill.strip() }}</span>
+            {% endfor %}
+        </div>
+
+        <p class="muted small">
+            Eligibility: {{ job.eligibility or 'Not specified' }}
+        </p>
+    </article>
+
+    {% else %}
+
+    <div class="empty">
+        <h3>No Jobs Posted Yet</h3>
+        <p>Use the button above to publish your first job.</p>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- Applications -->
+<section class="sectiontitle">
+    <div>
+        <div class="eyebrow">CANDIDATE REVIEW</div>
+        <h2>Applications Received</h2>
+    </div>
+</section>
+
+{% for a in applicants %}
+
+<article class="applicant">
+
+    <div class="applicanthead">
+
+        <div>
+            <div class="company">{{ a.title }}</div>
+
+            <h3>{{ a.student_name }}</h3>
+
+            <p class="muted small">{{ a.student_email }}</p>
+        </div>
+
+        <div class="rightscore">
+            <span class="scorepill">
+                {{ a.resume_score or 0 }}/100
+            </span>
+
+            <span class="status">{{ a.status }}</span>
+        </div>
+
+    </div>
+
+    <!-- Update Application Status -->
+    <form
+        method="post"
+        action="{{ url_for('update_status', application_id=a.id) }}"
+        class="inlineform"
+    >
+        <label>Update Status</label>
+
+        <select name="status">
+            <option value="Applied"
+                {% if a.status == 'Applied' %}selected{% endif %}>
+                Applied
+            </option>
+
+            <option value="Shortlisted"
+                {% if a.status == 'Shortlisted' %}selected{% endif %}>
+                Shortlisted
+            </option>
+
+            <option value="Rejected"
+                {% if a.status == 'Rejected' %}selected{% endif %}>
+                Rejected
+            </option>
+        </select>
+
+        <button type="submit" class="button secondary">
+            Save Status
+        </button>
+    </form>
+
+    <!-- Schedule Interview -->
+    <form
+        method="post"
+        action="{{ url_for('schedule_interview', application_id=a.id) }}"
+        class="form interviewform"
+    >
+        <h4>Schedule Interview</h4>
+
+        <div class="fields">
+
+            <div>
+                <label>Date and Time</label>
+
+                <input
+                    type="datetime-local"
+                    name="interview_date"
+                    required
+                >
+            </div>
+
+            <div>
+                <label>Interview Mode</label>
+
+                <select name="interview_mode">
+                    <option value="Online">Online</option>
+                    <option value="In-person">In-person</option>
+                </select>
+            </div>
+
+        </div>
+
+        <label>Notes (Optional)</label>
+
+        <input
+            type="text"
+            name="notes"
+            placeholder="Meeting link or interview instructions"
+        >
+
+        <button type="submit" class="button primary">
+            Schedule Interview →
+        </button>
+
+    </form>
+
+</article>
+
+{% else %}
+
+<div class="empty">
+    <h3>No Applications Yet</h3>
+    <p>
+        Once a student applies for a job, their application
+        will appear here.
+    </p>
+</div>
+
+{% endfor %}
+
+{% endblock %}
