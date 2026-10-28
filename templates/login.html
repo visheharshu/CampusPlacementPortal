@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Login | CampusHire AI{% endblock %}
+
+{% block content %}
+
+<!-- Login Page -->
+<div class="auth">
+
+    <!-- Left Side: Introduction -->
+    <div class="authintro">
+
+        <div class="eyebrow">WELCOME BACK</div>
+
+        <h1>Make your next move count.</h1>
+
+        <p>
+            Log in to continue your campus placement journey.
+        </p>
+
+        <div class="feature">
+            ✦ &nbsp; Track job applications
+        </div>
+
+        <div class="feature">
+            ✦ &nbsp; Explore career opportunities
+        </div>
+
+    </div>
+
+    <!-- Right Side: Login Form -->
+    <div class="formcard">
+
+        <div class="eyebrow">YOUR ACCOUNT</div>
+
+        <h2>Login</h2>
+
+        <p class="muted">
+            Enter your registered details.
+        </p>
+
+        <form method="post" class="form">
+
+            <label>Email address</label>
+
+            <input
+                name="email"
+                type="email"
+                required
+                placeholder="you@example.com"
+            >
+
+            <label>Password</label>
+
+            <input
+                name="password"
+                type="password"
+                required
+                placeholder="Enter your password"
+            >
+
+            <button class="button primary full">
+                Login →
+            </button>
+
+        </form>
+
+        <!-- Registration Link -->
+        <p class="formfoot">
+            New here?
+            <a href="{{ url_for('register') }}">
+                Create an account
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
