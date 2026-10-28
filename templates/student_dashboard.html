@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard | CampusHire AI{% endblock %}
+
+{% block content %}
+
+<!-- Student Dashboard Header -->
+<div class="pagehead">
+
+    <div class="eyebrow">STUDENT WORKSPACE</div>
+
+    <h1>Welcome, {{ session.get('name') }}.</h1>
+
+    <p>
+        Track your job applications and interview schedules.
+    </p>
+
+</div>
+
+<!-- Student Dashboard Statistics -->
+<section class="stats-grid">
+
+    <article class="stat-card">
+        <div class="stat-label">Total Applications</div>
+        <div class="stat-value">{{ total_applications }}</div>
+        <div class="stat-description">
+            Jobs you have applied for
+        </div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-label">Shortlisted</div>
+        <div class="stat-value">{{ shortlisted }}</div>
+        <div class="stat-description">
+            Applications shortlisted
+        </div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-label">Average Resume Score</div>
+        <div class="stat-value">{{ average_score }}<span>/100</span></div>
+        <div class="stat-description">
+            Your overall resume score
+        </div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-label">Interviews</div>
+        <div class="stat-value">{{ total_interviews }}</div>
+        <div class="stat-description">
+            Scheduled interviews
+        </div>
+    </article>
+
+</section>
+
+<!-- My Applications Section -->
+<section class="sectiontitle">
+
+    <div>
+        <div class="eyebrow">YOUR ACTIVITY</div>
+        <h2>My Applications</h2>
+    </div>
+
+    <a class="button primary" href="{{ url_for('jobs') }}">
+        Explore Jobs +
+    </a>
+
+</section>
+
+<!-- Applications Table -->
+<div class="tablewrap">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Resume Score</th>
+                <th>Status</th>
+                <th>Applied On</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for a in applications %}
+
+            <tr>
+                <td>{{ a.title }}</td>
+
+                <td>{{ a.company_name }}</td>
+
+                <td>
+    <div class="resume-score">
+        <span class="scorepill">
+            {{ a.resume_score or 0 }}/100
+        </span>
+
+        <div class="score-track">
+            <div
+                class="score-progress"
+                style="width: {{ [100, [a.resume_score or 0, 0]|max]|min }}%;"
+            ></div>
+        </div>
+    </div>
+</td>
+
+                <td>
+                    <span class="status status-{{ (a.status or 'Applied')|lower }}">
+                        {{ a.status or 'Applied' }}
+                    </span>
+                </td>
+
+                <td>{{ a.created_at }}</td>
+            </tr>
+
+            {% else %}
+
+            <tr>
+                <td colspan="5" class="emptycell">
+                    You have not applied for any jobs yet.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<!-- Interview Schedule Section -->
+<section class="sectiontitle">
+
+    <div>
+        <div class="eyebrow">UPCOMING</div>
+        <h2>Interview Schedule</h2>
+    </div>
+
+</section>
+
+<!-- Interview Cards -->
+<div class="cards">
+
+    {% for i in interviews %}
+
+    <article class="jobcard">
+
+        <div class="company">
+            {{ i.company_name }}
+        </div>
+
+        <h3>{{ i.title }}</h3>
+
+        <p>
+            <b>Date and Time:</b>
+            {{ i.interview_date }}
+        </p>
+
+        <p>
+            <b>Mode:</b>
+            {{ i.interview_mode }}
+        </p>
+
+        <p>
+            {{ i.notes or 'No additional notes.' }}
+        </p>
+
+    </article>
+
+    {% else %}
+
+    <div class="empty">
+        <h3>No Interviews Scheduled</h3>
+        <p>
+            Your upcoming interviews will appear here
+            when a company schedules one.
+        </p>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
