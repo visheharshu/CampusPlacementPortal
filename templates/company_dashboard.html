@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}Company Dashboard | CampusHire AI{% endblock %}
@@ -88,6 +87,31 @@
 
     {% endfor %}
 
+</div>
+
+<!-- Registered Students -->
+<section class="sectiontitle">
+    <div>
+        <div class="eyebrow">STUDENT DIRECTORY</div>
+        <h2>Registered Students ({{ students|length }})</h2>
+    </div>
+</section>
+
+<div class="cards">
+    {% for student in students %}
+    <article class="jobcard">
+        <h3>{{ student.name }}</h3>
+        <p class="muted small">{{ student.email }}</p>
+        <p class="muted small">
+            Registered: {{ student.created_at }}
+        </p>
+    </article>
+    {% else %}
+    <div class="empty">
+        <h3>No Students Registered Yet</h3>
+        <p>Student accounts will appear here after registration.</p>
+    </div>
+    {% endfor %}
 </div>
 
 <!-- Applications -->
