@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Home | CampusHire AI{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero">
+
+    <div class="hero-left">
+
+        <div class="eyebrow">
+            <span class="dot"></span>
+            SMARTER CAMPUS RECRUITMENT
+        </div>
+
+        <h1>
+            Find your <span>dream career.</span>
+        </h1>
+
+        <p>
+            Your journey from campus to career starts here.
+            Discover job opportunities, apply with your resume,
+            and let AI-powered resume matching help simplify
+            the placement process.
+        </p>
+
+        <div class="actions">
+
+            <a class="button primary" href="{{ url_for('jobs') }}">
+                Explore Jobs ↗
+            </a>
+
+            <a class="button secondary" href="{{ url_for('register') }}">
+                Create Account
+            </a>
+
+        </div>
+
+        <div class="checks">
+            <span>✓ Student-friendly</span>
+            <span>✓ AI Resume Scoring</span>
+            <span>✓ Interview Tracking</span>
+        </div>
+
+    </div>
+
+    <!-- AI Resume Preview -->
+    <div class="hero-right">
+
+        <div class="ring ring1"></div>
+        <div class="ring ring2"></div>
+
+        <div class="resume-card">
+
+            <div class="spark">✦</div>
+
+            <small>AI RESUME MATCH</small>
+
+            <div class="bigscore">
+                85<span>/100</span>
+            </div>
+
+            <div class="track">
+                <i></i>
+            </div>
+
+            <p>Resume compatibility preview</p>
+
+            <div class="pills">
+                <span>Skills</span>
+                <span>Education</span>
+                <span>Resume</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Platform Statistics -->
+<section class="statrow">
+
+    <div>
+        <b>{{ stats.students }}</b>
+        <span>Registered Students</span>
+    </div>
+
+    <div>
+        <b>{{ stats.companies }}</b>
+        <span>Registered Companies</span>
+    </div>
+
+    <div>
+        <b>{{ stats.jobs }}</b>
+        <span>Open Job Posts</span>
+    </div>
+
+</section>
+
+<!-- Latest Jobs -->
+<section class="sectiontitle">
+
+    <div>
+        <div class="eyebrow">LATEST OPPORTUNITIES</div>
+        <h2>Explore Open Positions</h2>
+    </div>
+
+    <a class="link" href="{{ url_for('jobs') }}">
+        View All Jobs →
+    </a>
+
+</section>
+
+<div class="cards">
+
+    {% for job in jobs %}
+
+    <article class="jobcard">
+
+        <div class="jobicon">▣</div>
+
+        <div class="company">
+            {{ job.company_name }}
+        </div>
+
+        <h3>{{ job.title }}</h3>
+
+        <p>
+            {{ job.description[:110] }}
+            {% if job.description|length > 110 %}…{% endif %}
+        </p>
+
+        <div class="tags">
+            {% for skill in job.skills.split(',')[:3] %}
+                <span>{{ skill.strip() }}</span>
+            {% endfor %}
+        </div>
+
+        <a class="link" href="{{ url_for('jobs') }}">
+            View Opportunity →
+        </a>
+
+    </article>
+
+    {% else %}
+
+    <div class="empty">
+
+        <h3>No Jobs Posted Yet</h3>
+
+        <p>
+            New opportunities will appear here when companies
+            publish their job openings.
+        </p>
+
+        <a class="button secondary" href="{{ url_for('register') }}">
+            Get Started
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- Call to Action -->
+<section class="banner">
+
+    <div>
+        <div class="eyebrow">YOUR NEXT STEP STARTS HERE</div>
+
+        <h2>Ready to take the next step?</h2>
+
+        <p>
+            Create your account, explore opportunities,
+            and begin your campus placement journey.
+        </p>
+    </div>
+
+    <a class="button light" href="{{ url_for('register') }}">
+        Join the Portal ↗
+    </a>
+
+</section>
+
+{% endblock %}
