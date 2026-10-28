@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Register | CampusHire AI{% endblock %}
+
+{% block content %}
+
+<!-- Registration Page -->
+<div class="auth">
+
+    <!-- Left Side: Introduction -->
+    <div class="authintro">
+
+        <div class="eyebrow">START YOUR JOURNEY</div>
+
+        <h1>Your next opportunity begins here.</h1>
+
+        <p>
+            Join students and companies using one simple placement portal.
+        </p>
+
+        <div class="feature">
+            ✦ &nbsp; Placement activities in one place
+        </div>
+
+        <div class="feature">
+            ✦ &nbsp; Resume scoring and job applications
+        </div>
+
+    </div>
+
+    <!-- Right Side: Registration Form -->
+    <div class="formcard">
+
+        <div class="eyebrow">CREATE ACCOUNT</div>
+
+        <h2>Register</h2>
+
+        <p class="muted">
+            Enter your details to get started.
+        </p>
+
+        <form method="post" class="form">
+
+            <!-- Full Name -->
+            <label>Full name</label>
+
+            <input
+                name="name"
+                required
+                placeholder="Enter your full name"
+            >
+
+            <!-- Email Address -->
+            <label>Email address</label>
+
+            <input
+                name="email"
+                type="email"
+                required
+                placeholder="you@example.com"
+            >
+
+            <!-- Password -->
+            <label>Password</label>
+
+            <input
+                name="password"
+                type="password"
+                minlength="6"
+                required
+                placeholder="At least 6 characters"
+            >
+
+            <!-- Account Role -->
+            <label>Register as</label>
+
+            <select name="role">
+                <option value="student">Student</option>
+                <option value="company">Company</option>
+            </select>
+
+            <!-- Submit Button -->
+            <button class="button primary full">
+                Create account →
+            </button>
+
+        </form>
+
+        <!-- Login Link -->
+        <p class="formfoot">
+            Already registered?
+            <a href="{{ url_for('login') }}">
+                Log in
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
