@@ -68,6 +68,16 @@ def init_db():
         );
         """)
 
+        columns = {
+            row["name"]
+            for row in db.execute("PRAGMA table_info(jobs)").fetchall()
+        }
+
+        if "min_percentage" not in columns:
+            db.execute(
+                "ALTER TABLE jobs ADD COLUMN min_percentage REAL NOT NULL DEFAULT 60"
+            )
+
 def login_required(role=None):
     def decorate(view):
         @wraps(view)
@@ -145,6 +155,12 @@ def home():
         }
     return render_template("home.html", jobs=latest_jobs, stats=stats)
 
+@app.template_filter("ampm")
+def format_ampm(value):
+    try:
+        return datetime.strptime(value[11:16], "%H:%M").strftime("%I:%M %p")
+    except (ValueError, TypeError):
+        return value
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -195,20 +211,44 @@ def jobs():
 
 @app.route("/jobs/new", methods=["GET", "POST"])
 @login_required("company")
+
 def new_job():
     if request.method == "POST":
         title = request.form.get("title", "").strip()
         description = request.form.get("description", "").strip()
         skills = request.form.get("skills", "").strip()
         eligibility = request.form.get("eligibility", "").strip()
+        min_percentage = request.form.get("min_percentage", "60").strip()
+
+        try:
+            min_percentage = float(min_percentage)
+            if not 0 <= min_percentage <= 100:
+                raise ValueError
+        except ValueError:
+            flash("Minimum percentage must be between 0 and 100.", "error")
+            return render_template("new_job.html")
+
         if not title or not description or not skills:
             flash("Job title, description and skills are required.", "error")
             return render_template("new_job.html")
+
         with db_conn() as db:
-            db.execute("INSERT INTO jobs(company_id,title,description,skills,eligibility) VALUES(?,?,?,?,?)",
-                       (session["user_id"], title, description, skills, eligibility))
+            db.execute("""
+                INSERT INTO jobs
+                (company_id, title, description, skills, eligibility, min_percentage)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                session["user_id"],
+                title,
+                description,
+                skills,
+                eligibility,
+                min_percentage
+            ))
+
         flash("Job posted successfully.", "success")
         return redirect(url_for("dashboard"))
+
     return render_template("new_job.html")
 
 @app.route("/apply/<int:job_id>", methods=["GET", "POST"])
@@ -373,27 +413,50 @@ def update_status(application_id):
 
 @app.route("/applications/<int:application_id>/interview", methods=["POST"])
 @login_required("company")
+
 def schedule_interview(application_id):
-    date = request.form.get("interview_date", "").strip()
+    interview_day = request.form.get("interview_day", "").strip()
+    interview_time = request.form.get("interview_time", "").strip()
     mode = request.form.get("interview_mode", "Online")
     notes = request.form.get("notes", "").strip()
+
     try:
-        datetime.fromisoformat(date)
+        interview_datetime = datetime.strptime(
+            f"{interview_day} {interview_time}",
+            "%Y-%m-%d %H:%M"
+        )
+        date = interview_datetime.strftime("%Y-%m-%dT%H:%M")
     except ValueError:
         flash("Select a valid interview date and time.", "error")
         return redirect(url_for("dashboard"))
+
     if mode not in {"Online", "In-person"}:
         mode = "Online"
+
     with db_conn() as db:
-        owned = db.execute("""SELECT a.id FROM applications a JOIN jobs j ON j.id=a.job_id
-            WHERE a.id=? AND j.company_id=?""", (application_id, session["user_id"])).fetchone()
+        owned = db.execute("""
+            SELECT a.id
+            FROM applications a
+            JOIN jobs j ON j.id = a.job_id
+            WHERE a.id = ? AND j.company_id = ?
+        """, (application_id, session["user_id"])).fetchone()
+
         if not owned:
             flash("Application not found.", "error")
         else:
-            db.execute("INSERT INTO interviews(application_id,interview_date,interview_mode,notes) VALUES(?,?,?,?)",
-                       (application_id, date, mode, notes))
-            db.execute("UPDATE applications SET status='Shortlisted' WHERE id=?", (application_id,))
+            db.execute("""
+                INSERT INTO interviews
+                (application_id, interview_date, interview_mode, notes)
+                VALUES (?, ?, ?, ?)
+            """, (application_id, date, mode, notes))
+
+            db.execute(
+                "UPDATE applications SET status='Shortlisted' WHERE id=?",
+                (application_id,)
+            )
+
             flash("Interview scheduled successfully.", "success")
+
     return redirect(url_for("dashboard"))
 
 @app.route("/recalculate-scores")
