@@ -4,6 +4,7 @@
 
 {% block content %}
 
+<!-- Company Header -->
 <div class="pagehead">
     <div class="eyebrow">COMPANY WORKSPACE</div>
 
@@ -76,6 +77,11 @@
         <p class="muted small">
             Eligibility: {{ job.eligibility or 'Not specified' }}
         </p>
+
+        <p class="muted small">
+            Minimum Academic Percentage:
+            {{ job.min_percentage }}%
+        </p>
     </article>
 
     {% else %}
@@ -98,23 +104,31 @@
 </section>
 
 <div class="cards">
+
     {% for student in students %}
+
     <article class="jobcard">
         <h3>{{ student.name }}</h3>
+
         <p class="muted small">{{ student.email }}</p>
+
         <p class="muted small">
             Registered: {{ student.created_at }}
         </p>
     </article>
+
     {% else %}
+
     <div class="empty">
         <h3>No Students Registered Yet</h3>
         <p>Student accounts will appear here after registration.</p>
     </div>
+
     {% endfor %}
+
 </div>
 
-<!-- Applications -->
+<!-- Applications Received -->
 <section class="sectiontitle">
     <div>
         <div class="eyebrow">CANDIDATE REVIEW</div>
@@ -182,18 +196,32 @@
         action="{{ url_for('schedule_interview', application_id=a.id) }}"
         class="form interviewform"
     >
+
         <h4>Schedule Interview</h4>
 
         <div class="fields">
 
             <div>
-                <label>Date and Time</label>
+                <label>Interview Date</label>
 
                 <input
-                    type="datetime-local"
-                    name="interview_date"
+                    type="date"
+                    name="interview_day"
                     required
                 >
+            </div>
+
+            <div>
+                <label>Interview Time</label>
+
+                <input
+                    type="time"
+                    name="interview_time"
+                    required
+                >
+                <p class="muted small">
+                    Select the time. AM/PM display depends on browser settings.
+                </p>
             </div>
 
             <div>
