@@ -324,54 +324,21 @@ def dashboard():
             ORDER BY a.id DESC
         """, (company_id,)).fetchall()
 
-        total_jobs = len(jobs)
-        total_applications = len(applicants)
-
-        shortlisted = sum(
-            1 for a in applicants
-            if (a["status"] or "").lower() == "shortlisted"
-        )
-
-        average_score = round(
-            sum(
-                (a["resume_score"] or 0)
-                for a in applicants
-            ) / total_applications
-        ) if total_applications else 0
-
-        return render_template(
-            "company_dashboard.html",
-            jobs=jobs,
-            applicants=applicants,
-            total_jobs=total_jobs,
-            total_applications=total_applications,
-            shortlisted=shortlisted,
-            average_score=average_score
-        )
-
-        jobs = db.execute("""
-            SELECT * FROM jobs
-            WHERE company_id = ?
+        students = db.execute("""
+            SELECT id, name, email, created_at
+            FROM users
+            WHERE role = 'student'
             ORDER BY id DESC
-        """, (session["user_id"],)).fetchall()
-
-        applicants = db.execute("""
-            SELECT a.*, j.title,
-                   s.name AS student_name,
-                   s.email AS student_email
-            FROM applications a
-            JOIN jobs j ON j.id = a.job_id
-            JOIN users s ON s.id = a.student_id
-            WHERE j.company_id = ?
-            ORDER BY a.id DESC
-        """, (session["user_id"],)).fetchall()
+        """).fetchall()
 
         total_jobs = len(jobs)
         total_applications = len(applicants)
+
         shortlisted = sum(
             1 for a in applicants
             if (a["status"] or "").lower() == "shortlisted"
         )
+
         average_score = round(
             sum((a["resume_score"] or 0) for a in applicants)
             / total_applications
@@ -381,12 +348,13 @@ def dashboard():
             "company_dashboard.html",
             jobs=jobs,
             applicants=applicants,
+            students=students,
             total_jobs=total_jobs,
             total_applications=total_applications,
             shortlisted=shortlisted,
             average_score=average_score
         )
-
+        
 @app.route("/applications/<int:application_id>/status", methods=["POST"])
 @login_required("company")
 def update_status(application_id):
