@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs | CampusHire AI{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="pagehead">
+
+    <div class="eyebrow">CAREER OPPORTUNITIES</div>
+
+    <h1>Find your next role.</h1>
+
+    <p>
+        Explore jobs posted by registered companies.
+    </p>
+
+</div>
+
+<!-- Job Listings -->
+<div class="cards">
+
+    {% for job in jobs %}
+
+    <article class="jobcard">
+
+        <div class="jobicon">▣</div>
+
+        <div class="company">
+            {{ job.company_name }}
+        </div>
+
+        <h3>{{ job.title }}</h3>
+
+        <p>
+            {{ job.description }}
+        </p>
+
+        <!-- Required Skills -->
+        <div class="tags">
+
+            {% for skill in job.skills.split(',') %}
+
+                <span>{{ skill.strip() }}</span>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- Eligibility -->
+        <p class="muted small">
+            Eligibility:
+            {{ job.eligibility or 'As per company criteria' }}
+        </p>
+
+        <!-- Apply Button -->
+        {% if session.get('role') == 'student' %}
+
+            <a
+                class="button primary full"
+                href="{{ url_for('apply', job_id=job.id) }}"
+            >
+                Apply Now →
+            </a>
+
+        {% elif not session.get('user_id') %}
+
+            <a
+                class="button secondary full"
+                href="{{ url_for('login') }}"
+            >
+                Login to Apply →
+            </a>
+
+        {% else %}
+
+            <span class="muted small">
+                Log in as a student to apply.
+            </span>
+
+        {% endif %}
+
+    </article>
+
+    {% else %}
+
+    <!-- Empty State -->
+    <div class="empty">
+
+        <h3>No Jobs Available Yet</h3>
+
+        <p>
+            Register a company account and post a job.
+        </p>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
