@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Post Job | CampusHire AI{% endblock %}
+
+{% block content %}
+
+<!-- New Job Form -->
+<div class="narrow">
+
+    <div class="formcard wide">
+
+        <div class="eyebrow">COMPANY WORKSPACE</div>
+
+        <h2>Post a new job</h2>
+
+        <p class="muted">
+            Share an opportunity with students.
+        </p>
+
+        <form method="post" class="form">
+
+            <!-- Job Title -->
+            <label>Job title</label>
+
+            <input
+                name="title"
+                required
+                placeholder="e.g. Junior Data Analyst"
+            >
+
+            <!-- Job Description -->
+            <label>Job description</label>
+
+            <textarea
+                name="description"
+                rows="4"
+                required
+                placeholder="Describe the role and responsibilities"
+            ></textarea>
+
+            <!-- Required Skills -->
+            <label>Required skills (comma-separated)</label>
+
+            <input
+                name="skills"
+                required
+                placeholder="Python, SQL, HTML"
+            >
+
+            <!-- Eligibility Criteria -->
+            <label>Eligibility</label>
+
+            <input
+                name="eligibility"
+                placeholder="e.g. BSc IT / Graduate"
+            >
+
+            <!-- Submit Button -->
+            <button class="button primary full">
+                Publish job →
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
