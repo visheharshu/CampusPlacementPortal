@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Apply | CampusHire AI{% endblock %}
+
+{% block content %}
+
+<div class="narrow">
+
+    <div class="formcard wide">
+
+        <div class="eyebrow">JOB APPLICATION</div>
+
+        <h2>{{ job.title }}</h2>
+
+        <p class="company">
+            {{ job.company_name }}
+        </p>
+
+        <p>
+            {{ job.description }}
+        </p>
+
+        <!-- Required Skills -->
+        <div class="tags">
+
+            {% for skill in job.skills.split(',') %}
+
+                <span>{{ skill.strip() }}</span>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- Resume Upload Form -->
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            class="form space"
+        >
+
+            <label>Upload Your Resume</label>
+
+            <input
+                type="file"
+                name="resume"
+                accept=".pdf,.doc,.docx,.txt"
+                required
+            >
+
+            <p class="muted small">
+                PDF, DOC, DOCX or TXT · Maximum 5 MB.
+                For keyword score testing, a TXT resume works best.
+            </p>
+
+            <button class="button primary full">
+                Submit Application →
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
